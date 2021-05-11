@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import co.distriunidos.app.domain.CarritoDeCompras;
 import co.distriunidos.app.domain.ProductosAComprar;
 import co.distriunidos.app.dto.ProductosAComprarDTO;
-import co.distriunidos.app.repository.CarritoDeComprasRepository;
 import co.distriunidos.app.repository.ProductosAComprarRepository;
 
 /*Acá se implementan los metodos que estan en la interfaz del servicio*/
@@ -29,30 +28,31 @@ public class ProductosAComprarServiceImpl implements ProductosAComprarService {
 	/* Se añade el productos a comprar y se actualiza el total del carrito */
 	@Override
 	public ProductosAComprarDTO agregarCarrito(ProductosAComprar productosAComprar) throws Exception {
+		/*Validaciones*/
 		if (productosAComprar.getIdProd() == null) {
 			throw new Exception("No existe el producto");
 		}
 		if (productosAComprar.getIdCarro() == null) {
 			throw new Exception("No existe el carrito");
 		}
-		/*
-		 * Consulto el carrito de compras, valido si no esta vacia y le sumo las
-		 * cantidades
-		 */
 		
-		/*Consulto la lista de productos del carrito, para saber que productos ya ha añadido*/
+		
+		/*Consulto la lista de productos que se agregan*/
 		List<ProductosAComprarDTO> lstProductosAComprar = buscarCarrito(productosAComprar.getIdCarro().getIdCarro());
 		
 		
-		/*Consulto el carrito*/
+		/*Consulto el objeto carrito en la base de datos*/
 		CarritoDeCompras carro = carritoService.consultarCarritoDeCompras(productosAComprar.getIdCarro().getIdCarro());
 		
-		
 		Double totalAux;
+		/*Se coloca en 0 para volver a recalcular el total*/
 		carro.setTotal(0D);
 
+		/*Valido si la lista no se encuentra vacia*/
 		if (!lstProductosAComprar.isEmpty()) {
+			/*Recorro la lista de productos y lo almaceno en el productos a comprar DTO*/
 			for (ProductosAComprarDTO productosAComprarDTO : lstProductosAComprar) {
+				/*Valido si el id del producto es igual al que esta en la base de datos*/
 				if (productosAComprarDTO.getIdProd() == productosAComprar.getIdProd().getIdProd()) {
 					Integer aux;
 					Double auxTotal;
@@ -60,6 +60,7 @@ public class ProductosAComprarServiceImpl implements ProductosAComprarService {
 					productosAComprar.setCantidad(aux);
 					auxTotal = productosAComprar.getTotal() + productosAComprarDTO.getTotal();
 					productosAComprar.setTotal(auxTotal);
+					/*Vuelo a poner el codigo de compra para que me lo actualice*/
 					productosAComprar.setIdCompra(productosAComprarDTO.getIdCompra());
 				}
 
@@ -79,7 +80,7 @@ public class ProductosAComprarServiceImpl implements ProductosAComprarService {
 		return productosAComprarDTO;
 	}
 
-	/* Busca la lista de productos por carrito */
+	/* Busca la lista de productos por carrito y lo convierto en un DTO */
 	@Override
 	public List<ProductosAComprarDTO> buscarCarrito(Integer idCarro) throws Exception {
 		return buildProdAComprarDTOList(productosAComprarRepository.findAllByIdCarro_idCarro(idCarro));

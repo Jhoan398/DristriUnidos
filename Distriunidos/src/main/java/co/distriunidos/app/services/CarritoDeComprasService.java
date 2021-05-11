@@ -14,7 +14,8 @@ public interface CarritoDeComprasService {
 
 	
 	public void agregarCarrito(CarritoDeCompras carrito) throws Exception;
-	public List<CarritoDeCompras> consultarCarrosDeCompras() throws Exception;
+	public List<CarritoDeComprasDTO> consultarCarrosDeCompras() throws Exception;
+	public List<CarritoDeComprasDTO> buildconsultarCarrosDeCompras(List<CarritoDeCompras> listaCarritoDeCompras) throws Exception;	
 	public CarritoDeCompras consultarCarritoDeCompras(Integer id)throws Exception;
 	CarritoDeComprasDTO consultarCarritoDeComprasDTO(Integer id) throws Exception;
 	

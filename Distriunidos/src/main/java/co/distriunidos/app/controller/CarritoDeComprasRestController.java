@@ -65,5 +65,15 @@ public class CarritoDeComprasRestController {
 		
 	}
 	
+	@GetMapping("/consultarCarrosDeCompras")
+	public ResponseEntity<?> consultarCarrosDeCompra(){
+		try {
+			
+			return ResponseEntity.ok().body(carritoService.consultarCarrosDeCompras());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+		
+	}
 	
 }
